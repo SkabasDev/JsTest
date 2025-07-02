@@ -2,7 +2,7 @@ import { Controller, Get, Query, Param, BadRequestException } from '@nestjs/comm
 import { FranchiseService } from './franchise.service';
 import { FranchiseRequestDto } from './dtos/franchise-request.dto';
 
-@Controller('api/:franchise/:version')
+@Controller('/api/:franchise/:version')
 export class FranchiseController {
   constructor(private readonly franchiseService: FranchiseService) {}
 

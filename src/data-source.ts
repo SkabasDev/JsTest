@@ -11,5 +11,5 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   migrations: ['dist/migration/*.js'],
-  entities: ['dist/**/*.entity.js'],
+  entities: [__dirname + '/models/*.model.{js,ts}'],
 });
