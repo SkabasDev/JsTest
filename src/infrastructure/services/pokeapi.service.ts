@@ -1,4 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 import axios from 'axios';
 import { PokeApiSpeciesResponse, PokeApiEvoChainResponse, PokeApiResponse } from '~/interfaces/external/pokeapi-response.interface';
 
@@ -6,7 +8,17 @@ import { PokeApiSpeciesResponse, PokeApiEvoChainResponse, PokeApiResponse } from
 export class PokeapiService {
   private readonly logger = new Logger(PokeapiService.name);
 
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
+
   async getPokemon(endpoint: string, baseUrl?: string) {
+    const cacheKey = `pokeapi:${endpoint}`;
+    const cached = await this.cacheManager.get(cacheKey);
+    if (cached) {
+      this.logger.log(`Cache hit for ${cacheKey}`);
+      return cached;
+    }
     try {
       const url = `${baseUrl || 'https://pokeapi.co/api/v2'}/${endpoint}`;
       this.logger.log(`Requesting Pokemon API endpoint: ${url}`);
